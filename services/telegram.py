@@ -1,19 +1,16 @@
 import asyncio
-
-import aiogram
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 
 from services.keyboards import kb_change_channel, kb_add_channel, start_monitoring
 from services.youtube_requests import YouTubeRequest
-
+from settings import upd_time
 channel_youtube = YouTubeRequest('')
 
 
-#@dp.message_handler(commands=['start'])
 async def start_func(message: types.Message):
-    await message.answer(text='Hello!')
+    await message.answer(text='Hello!\nEnter command /channel_settings for add or change monitored channel"')
     await message.delete()
 
 
@@ -21,7 +18,6 @@ class SettingYoutube(StatesGroup):
     channel = State()
 
 
-#@dp.message_handler(commands=['channel_settings'], state=None)
 async def help_func(message: types.Message):
     if channel_youtube.channel_id:
         await message.answer(text=f'Channel {channel_youtube.channel_id} is being monitored',
@@ -31,7 +27,6 @@ async def help_func(message: types.Message):
                              reply_markup=kb_add_channel)
 
 
-#@dp.callback_query_handler()
 async def add_channel(callback: types.CallbackQuery):
     if callback.data == 'add_channel':
         await SettingYoutube.channel.set()
@@ -43,7 +38,6 @@ async def add_channel(callback: types.CallbackQuery):
         pass
 
 
-#@dp.message_handler(state=SettingYoutube.channel)
 async def write_channel(message: types.Message, state=FSMContext):
     async with state.proxy() as data:
         data['channel_id'] = message.text
@@ -52,7 +46,6 @@ async def write_channel(message: types.Message, state=FSMContext):
         await state.finish()
 
 
-#@dp.callback_query_handler(text='start_parsing')
 async def monitoring_new_video(callback: types.CallbackQuery):
     if callback.data == 'start_parsing':
         print('whaaait')
@@ -65,7 +58,7 @@ async def monitoring_new_video(callback: types.CallbackQuery):
                     await callback.message.answer(text=f"New video!\n {new_video['name']} \n {new_video['link']}")
             finally:
                 #await callback.message.answer(text='No new video')
-                await asyncio.sleep(5)
+                await asyncio.sleep(upd_time)
 
 
 def register_handlers_tg(dp_name: Dispatcher):
