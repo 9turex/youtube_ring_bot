@@ -3,7 +3,7 @@
 import pathlib
 
 # Input your bot token here from Bot Father
-telegram_api_token = '5873997594:AAEap5Z-W89scNDjhtp-i_kTAaHXdha5llg'
+telegram_api_token = 'ENTER YOUR TOKEN HERE'
 
 # Input update time
 upd_time = 5
